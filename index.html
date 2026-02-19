@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Now</title>
+    <link rel="preconnect" href="https://api.open-meteo.com" />
+    <link rel="preconnect" href="https://geocoding-api.open-meteo.com" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Local weather, fast.</p>
+          <h1>Weather Now</h1>
+          <p class="subhead">Current conditions, next 24 hours, and the week ahead.</p>
+        </div>
+        <div class="controls">
+          <button id="btn-location" class="btn primary">Use my location</button>
+          <div class="search">
+            <input id="city-input" type="text" placeholder="Search city" autocomplete="off" />
+            <div id="search-results" class="search-results" aria-live="polite"></div>
+          </div>
+          <div id="quick-actions" class="quick-actions"></div>
+        </div>
+      </header>
+
+      <main>
+        <section class="card current" id="current-section">
+          <div class="current-header">
+            <div>
+              <p class="label" id="location-label">Select a location</p>
+              <h2 id="current-temp">--</h2>
+              <div class="current-desc">
+                <span id="current-icon" class="icon"></span>
+                <p id="current-desc">—</p>
+              </div>
+            </div>
+            <div class="current-meta">
+              <p><span>Feels like</span> <strong id="current-feels">--</strong></p>
+              <p><span>Wind</span> <strong id="current-wind">--</strong></p>
+              <p><span>Precip chance</span> <strong id="current-precip">--</strong></p>
+            </div>
+          </div>
+          <div id="current-extra" class="current-extra">
+            <span id="current-updated" class="updated">Last updated: —</span>
+          </div>
+        </section>
+
+        <section class="card" id="hourly-section">
+          <div class="section-header">
+            <h3>Next 24 Hours</h3>
+          </div>
+          <div id="hourly-list" class="hourly-list"></div>
+        </section>
+
+        <section class="card" id="daily-section">
+          <div class="section-header">
+            <h3>Next 7 Days</h3>
+          </div>
+          <div id="daily-list" class="daily-list"></div>
+        </section>
+
+        <section class="card status" id="status-section">
+          <p id="status-text">Choose a location to get started.</p>
+          <button id="retry-btn" class="btn ghost" hidden>Retry</button>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>Data from Open-Meteo (forecast and geocoding). Built for speed and clarity.</p>
+        <p>About: This app uses your browser location or a searched city to fetch weather forecasts.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

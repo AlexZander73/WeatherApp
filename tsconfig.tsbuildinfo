@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/api/geocode.ts","./src/api/openmeteo.ts","./src/state/store.ts","./src/ui/rendercurrent.ts","./src/ui/renderdaily.ts","./src/ui/renderhourly.ts","./src/utils/format.ts","./src/utils/weathercodes.ts","./src/utils/__tests__/format.test.ts","./src/utils/__tests__/weathercodes.test.ts","./vite.config.ts"],"version":"5.9.3"}
