@@ -25,14 +25,18 @@ export type ForecastResponse = {
   }
 }
 
-export async function fetchForecast(lat: number, lon: number): Promise<ForecastResponse> {
+export async function fetchForecast(
+  lat: number,
+  lon: number,
+  temperatureUnit: 'celsius' | 'fahrenheit'
+): Promise<ForecastResponse> {
   const params = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lon.toString(),
     current: 'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation_probability',
     hourly: 'temperature_2m,weather_code,precipitation_probability',
     daily: 'temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max',
-    temperature_unit: 'fahrenheit',
+    temperature_unit: temperatureUnit,
     wind_speed_unit: 'mph',
     timezone: 'auto'
   })

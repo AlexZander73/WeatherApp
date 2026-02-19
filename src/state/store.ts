@@ -7,14 +7,19 @@ export type LocationResult = {
   timezone?: string
 }
 
+export type UnitPreference = 'c' | 'f'
+
 type StoreState = {
   location: LocationResult | null
+  unitPreference: UnitPreference | null
 }
 
 const STORAGE_KEY = 'weather:lastLocation'
+const UNIT_KEY = 'weather:unitPreference'
 
 const state: StoreState = {
-  location: null
+  location: null,
+  unitPreference: null
 }
 
 export const store = {
@@ -25,6 +30,14 @@ export const store = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(loc))
     } else {
       localStorage.removeItem(STORAGE_KEY)
+    }
+  },
+  setUnitPreference: (unit: UnitPreference | null) => {
+    state.unitPreference = unit
+    if (unit) {
+      localStorage.setItem(UNIT_KEY, unit)
+    } else {
+      localStorage.removeItem(UNIT_KEY)
     }
   },
   loadFromStorage: () => {
@@ -38,5 +51,14 @@ export const store = {
       localStorage.removeItem(STORAGE_KEY)
       return null
     }
+  },
+  loadUnitPreference: () => {
+    const raw = localStorage.getItem(UNIT_KEY)
+    if (raw === 'c' || raw === 'f') {
+      state.unitPreference = raw
+      return raw
+    }
+    localStorage.removeItem(UNIT_KEY)
+    return null
   }
 }

@@ -6,7 +6,8 @@ import { iconColor, iconSvg } from './icons'
 
 export function renderCurrent(
   forecast: ForecastResponse,
-  location: LocationResult
+  location: LocationResult,
+  unit: 'c' | 'f'
 ): void {
   const label = document.querySelector<HTMLParagraphElement>('#location-label')
   const temp = document.querySelector<HTMLHeadingElement>('#current-temp')
@@ -26,11 +27,11 @@ export function renderCurrent(
   const code = getWeatherCode(current.weather_code)
 
   label.textContent = locationLabel
-  temp.textContent = formatTemp(current.temperature_2m)
+  temp.textContent = formatTemp(current.temperature_2m, unit)
   desc.textContent = code.label
   icon.innerHTML = iconSvg(code.icon)
   icon.style.color = iconColor(code.icon)
-  feels.textContent = formatTemp(current.apparent_temperature)
+  feels.textContent = formatTemp(current.apparent_temperature, unit)
   wind.textContent = formatWind(current.wind_speed_10m)
   precip.textContent = formatPercent(current.precipitation_probability)
   updated.textContent = `Last updated: ${formatUpdatedLabel(current.time, forecast.timezone)}`

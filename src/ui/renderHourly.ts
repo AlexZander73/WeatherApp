@@ -3,7 +3,7 @@ import { formatHourLabel, formatPercent, formatTemp } from '../utils/format'
 import { getWeatherCode } from '../utils/weatherCodes'
 import { iconColor, iconSvg } from './icons'
 
-export function renderHourly(forecast: ForecastResponse): void {
+export function renderHourly(forecast: ForecastResponse, unit: 'c' | 'f'): void {
   const container = document.querySelector<HTMLDivElement>('#hourly-list')
   if (!container) return
   container.innerHTML = ''
@@ -25,7 +25,7 @@ export function renderHourly(forecast: ForecastResponse): void {
         <p class="desc"><span class="icon" style="color:${iconColor(code.icon)}">${iconSvg(code.icon)}</span>${code.label}</p>
       </div>
       <div class="hourly-meta">
-        <span>${formatTemp(hourly.temperature_2m[i])}</span>
+        <span>${formatTemp(hourly.temperature_2m[i], unit)}</span>
         <span>${formatPercent(hourly.precipitation_probability?.[i])}</span>
       </div>
     `

@@ -12,6 +12,23 @@
   --muted: #5c6b7a;
   --border: rgba(12, 27, 42, 0.08);
   --shadow: 0 18px 40px rgba(15, 34, 60, 0.12);
+  --bg: radial-gradient(circle at top left, #e2ebff, #f5f7fb 55%, #edf1f8 100%);
+  --panel: #f7f9fe;
+  --panel-border: #e4e8f4;
+}
+
+[data-theme='dark'] {
+  color: #e5eef9;
+  background: #0a1018;
+  --card-bg: #111a24;
+  --accent: #5ea0ff;
+  --accent-dark: #2f6fd8;
+  --muted: #9db0c5;
+  --border: rgba(229, 238, 249, 0.12);
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --bg: radial-gradient(circle at top left, #1a2330, #0a1018 60%, #0b0f16 100%);
+  --panel: #162131;
+  --panel-border: rgba(229, 238, 249, 0.1);
 }
 
 * {
@@ -22,7 +39,7 @@
 
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #e2ebff, #f5f7fb 55%, #edf1f8 100%);
+  background: var(--bg);
   color: inherit;
 }
 
@@ -77,7 +94,8 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border);
   font-size: 1rem;
-  background: #fff;
+  background: var(--card-bg);
+  color: inherit;
 }
 
 .search-results {
@@ -85,7 +103,7 @@ h1 {
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
@@ -107,7 +125,7 @@ h1 {
 
 .chip {
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--card-bg);
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 0.85rem;
@@ -117,7 +135,7 @@ h1 {
 
 .chip:hover {
   border-color: rgba(26, 109, 255, 0.4);
-  color: #0c1b2a;
+  color: inherit;
 }
 
 .search-item {
@@ -130,7 +148,7 @@ h1 {
 }
 
 .search-item:hover {
-  background: #f1f5ff;
+  background: rgba(26, 109, 255, 0.1);
 }
 
 .btn {
@@ -155,6 +173,36 @@ h1 {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
+}
+
+.toggles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+.segmented button {
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.segmented button.active {
+  background: rgba(26, 109, 255, 0.15);
+  color: inherit;
 }
 
 main {
@@ -212,7 +260,7 @@ main {
 }
 
 .current-meta strong {
-  color: #0c1b2a;
+  color: inherit;
   margin-left: 6px;
 }
 
@@ -236,8 +284,8 @@ main {
   align-items: center;
   padding: 12px 14px;
   border-radius: 12px;
-  background: #f7f9fe;
-  border: 1px solid #e4e8f4;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
 }
 
 .hourly-item .desc,

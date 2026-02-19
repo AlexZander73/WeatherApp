@@ -1,6 +1,9 @@
-export function formatTemp(value: number | null | undefined): string {
+export function formatTemp(
+  value: number | null | undefined,
+  unit: 'c' | 'f'
+): string {
   if (value === null || value === undefined || Number.isNaN(value)) return '--'
-  return `${Math.round(value)}°`
+  return `${Math.round(value)}°${unit.toUpperCase()}`
 }
 
 export function formatWind(value: number | null | undefined): string {

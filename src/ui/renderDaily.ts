@@ -3,7 +3,7 @@ import { formatDayLabel, formatPercent, formatTemp } from '../utils/format'
 import { getWeatherCode } from '../utils/weatherCodes'
 import { iconColor, iconSvg } from './icons'
 
-export function renderDaily(forecast: ForecastResponse): void {
+export function renderDaily(forecast: ForecastResponse, unit: 'c' | 'f'): void {
   const container = document.querySelector<HTMLDivElement>('#daily-list')
   if (!container) return
   container.innerHTML = ''
@@ -22,8 +22,8 @@ export function renderDaily(forecast: ForecastResponse): void {
         <p class="desc"><span class="icon" style="color:${iconColor(code.icon)}">${iconSvg(code.icon)}</span>${code.label}</p>
       </div>
       <div class="daily-meta">
-        <span class="high">${formatTemp(daily.temperature_2m_max[index])}</span>
-        <span class="low">${formatTemp(daily.temperature_2m_min[index])}</span>
+        <span class="high">${formatTemp(daily.temperature_2m_max[index], unit)}</span>
+        <span class="low">${formatTemp(daily.temperature_2m_min[index], unit)}</span>
         <span>${formatPercent(daily.precipitation_probability_max?.[index])}</span>
       </div>
     `

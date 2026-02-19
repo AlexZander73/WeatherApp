@@ -4,7 +4,7 @@ import { geocodeCity } from './api/geocode'
 import { renderCurrent } from './ui/renderCurrent'
 import { renderHourly } from './ui/renderHourly'
 import { renderDaily } from './ui/renderDaily'
-import { store, type LocationResult } from './state/store'
+import { store, type LocationResult, type UnitPreference } from './state/store'
 
 const statusSection = document.querySelector<HTMLDivElement>('#status-section')
 const statusText = document.querySelector<HTMLParagraphElement>('#status-text')
@@ -14,9 +14,70 @@ const cityInput = document.querySelector<HTMLInputElement>('#city-input')
 const searchResults = document.querySelector<HTMLDivElement>('#search-results')
 const quickActions = document.querySelector<HTMLDivElement>('#quick-actions')
 const refreshBtn = document.querySelector<HTMLButtonElement>('#refresh-btn')
+const unitToggle = document.querySelector<HTMLDivElement>('#unit-toggle')
+const themeToggle = document.querySelector<HTMLButtonElement>('#theme-toggle')
 
 let lastRequest: LocationResult | null = null
 let searchTimeout: number | null = null
+let unitPreference: UnitPreference | null = null
+let currentUnit: UnitPreference = 'c'
+let currentTheme: 'system' | 'light' | 'dark' = 'system'
+
+const FAHRENHEIT_COUNTRIES = new Set([
+  'United States',
+  'United States of America',
+  'USA',
+  'Liberia',
+  'Myanmar'
+])
+
+function guessUnitFromLocale(): UnitPreference {
+  const lang = navigator.language || ''
+  return lang.endsWith('-US') ? 'f' : 'c'
+}
+
+function guessUnitForLocation(location: LocationResult | null): UnitPreference {
+  if (location?.country && FAHRENHEIT_COUNTRIES.has(location.country)) return 'f'
+  return guessUnitFromLocale()
+}
+
+function resolveUnit(location: LocationResult | null): UnitPreference {
+  return unitPreference ?? guessUnitForLocation(location)
+}
+
+function updateUnitToggle(unit: UnitPreference) {
+  if (!unitToggle) return
+  const buttons = unitToggle.querySelectorAll<HTMLButtonElement>('button')
+  buttons.forEach((btn) => {
+    const isActive = btn.dataset.unit === unit
+    btn.classList.toggle('active', isActive)
+  })
+}
+
+function applyTheme(theme: 'system' | 'light' | 'dark') {
+  currentTheme = theme
+  const root = document.documentElement
+  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+  const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme
+  root.dataset.theme = resolved
+  if (themeToggle) {
+    const label = theme === 'system' ? 'System' : theme === 'dark' ? 'Dark' : 'Light'
+    themeToggle.textContent = `Theme: ${label}`
+  }
+}
+
+function loadThemePreference() {
+  const saved = localStorage.getItem('weather:theme')
+  if (saved === 'light' || saved === 'dark' || saved === 'system') {
+    applyTheme(saved)
+  } else {
+    applyTheme('system')
+  }
+}
+
+function saveThemePreference(theme: 'system' | 'light' | 'dark') {
+  localStorage.setItem('weather:theme', theme)
+}
 
 function setStatus(message: string, showRetry = false) {
   if (!statusSection || !statusText || !retryBtn) return
@@ -51,10 +112,16 @@ async function loadForecast(location: LocationResult) {
   try {
     lastRequest = location
     setStatus('Loading forecast...')
-    const forecast = await fetchForecast(location.latitude, location.longitude)
-    renderCurrent(forecast, location)
-    renderHourly(forecast)
-    renderDaily(forecast)
+    currentUnit = resolveUnit(location)
+    updateUnitToggle(currentUnit)
+    const forecast = await fetchForecast(
+      location.latitude,
+      location.longitude,
+      currentUnit === 'f' ? 'fahrenheit' : 'celsius'
+    )
+    renderCurrent(forecast, location, currentUnit)
+    renderHourly(forecast, currentUnit)
+    renderDaily(forecast, currentUnit)
     store.setLocation({ ...location, timezone: forecast.timezone })
     renderQuickActions({ ...location, timezone: forecast.timezone })
     hideStatus()
@@ -135,6 +202,26 @@ refreshBtn?.addEventListener('click', () => {
   if (lastRequest) loadForecast(lastRequest)
 })
 
+unitToggle?.addEventListener('click', (event) => {
+  const target = event.target as HTMLElement
+  const unit = target.getAttribute('data-unit')
+  if (unit === 'c' || unit === 'f') {
+    unitPreference = unit
+    store.setUnitPreference(unit)
+    if (lastRequest) loadForecast(lastRequest)
+  }
+})
+
+themeToggle?.addEventListener('click', () => {
+  const next = currentTheme === 'system' ? 'dark' : currentTheme === 'dark' ? 'light' : 'system'
+  applyTheme(next)
+  saveThemePreference(next)
+})
+
+window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (currentTheme === 'system') applyTheme('system')
+})
+
 btnLocation?.addEventListener('click', handleLocationClick)
 
 cityInput?.addEventListener('input', (event) => {
@@ -149,6 +236,11 @@ window.addEventListener('click', (event) => {
     searchResults.classList.remove('open')
   }
 })
+
+unitPreference = store.loadUnitPreference()
+currentUnit = resolveUnit(null)
+updateUnitToggle(currentUnit)
+loadThemePreference()
 
 const cached = store.loadFromStorage()
 if (cached) {
