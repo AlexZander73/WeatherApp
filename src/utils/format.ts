@@ -39,6 +39,7 @@ export function formatUpdatedLabel(iso: string, timezone: string): string {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
-    timeZone: timezone
+    timeZone: timezone,
+    timeZoneName: 'short'
   }).format(date)
 }

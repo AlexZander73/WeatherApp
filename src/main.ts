@@ -13,6 +13,7 @@ const btnLocation = document.querySelector<HTMLButtonElement>('#btn-location')
 const cityInput = document.querySelector<HTMLInputElement>('#city-input')
 const searchResults = document.querySelector<HTMLDivElement>('#search-results')
 const quickActions = document.querySelector<HTMLDivElement>('#quick-actions')
+const refreshBtn = document.querySelector<HTMLButtonElement>('#refresh-btn')
 
 let lastRequest: LocationResult | null = null
 let searchTimeout: number | null = null
@@ -22,11 +23,13 @@ function setStatus(message: string, showRetry = false) {
   statusSection.classList.remove('hidden')
   statusText.textContent = message
   retryBtn.hidden = !showRetry
+  if (refreshBtn) refreshBtn.disabled = true
 }
 
 function hideStatus() {
   if (!statusSection) return
   statusSection.classList.add('hidden')
+  if (refreshBtn) refreshBtn.disabled = false
 }
 
 function renderQuickActions(location: LocationResult | null) {
@@ -125,6 +128,10 @@ async function handleSearchInput(value: string) {
 }
 
 retryBtn?.addEventListener('click', () => {
+  if (lastRequest) loadForecast(lastRequest)
+})
+
+refreshBtn?.addEventListener('click', () => {
   if (lastRequest) loadForecast(lastRequest)
 })
 
